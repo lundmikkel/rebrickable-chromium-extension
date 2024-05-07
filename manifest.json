@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "Rebrickable Extension",
+  "version": "0.1.0",
+  "permissions": ["activeTab", "storage"],
+  "background": {
+    "service_worker": "dist/background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://rebrickable.com/*"],
+      "js": ["dist/content.js"]
+    }
+  ],
+  "action": {
+    "default_popup": "dist/popup.html"
+  }
+}

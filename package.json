@@ -1,0 +1,25 @@
+{
+  "name": "rebrickable-extension",
+  "version": "0.1.0",
+  "description": "Improves the experience of using Rebrickable to track your LEGO bricks",
+  "scripts": {
+    "build": "webpack --mode production",
+    "watch": "webpack --watch --mode production",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "rebrickable",
+    "lego",
+    "bricks"
+  ],
+  "author": "Mikkel Riise Lund",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/chrome": "^0.0.267",
+    "html-webpack-plugin": "^5.6.0",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.4.5",
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4"
+  }
+}
