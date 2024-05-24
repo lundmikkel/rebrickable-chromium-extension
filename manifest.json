@@ -14,7 +14,7 @@
     {
       "matches": ["https://rebrickable.com/sets/*"],
       "js": ["dist/part-colors.js"],
-      "css": ["dist/part-colors-styles.css"]
+      "css": ["dist/part-colors.css"]
     }
   ],
   "action": {
