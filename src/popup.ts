@@ -20,21 +20,21 @@ document.addEventListener("DOMContentLoaded", () => {
 function registerPageContent() {
   const apiKey = syncStorage.Get(storageKey)
 
-  if (apiKey == "") {
+  if (apiKey) {
     hideDiv("enter-api-key-section")
     showDiv("api-key-entered-section")
   } else {
-    hideDiv("api-key-entered-section")
     showDiv("enter-api-key-section")
+    hideDiv("api-key-entered-section")
   }
 }
 
 function hideDiv(div: string) {
-  document.getElementById(div)!.hidden = true;
+  document.getElementById(div)!.style.display = "none"
 }
 
 function showDiv(div: string) {
-  document.getElementById(div)!.hidden = false;
+  document.getElementById(div)!.style.display = "block"
 }
 
 function registerSubmitApiKeyButton() {
@@ -63,8 +63,6 @@ function registerDeleteApiKeyButton() {
   if (button) {
     button.addEventListener("click", () => {
       deleteApiKey()
-
-      registerPageContent()
     });
   }
 }
