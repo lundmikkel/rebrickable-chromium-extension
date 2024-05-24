@@ -2,6 +2,7 @@ import { combineLatest, map, of, tap } from "rxjs";
 import SyncStorage from "../storage/sync-storage";
 import "./part-tracker.scss";
 import { Context } from "../context/context";
+import { updateProgressBar, initializeProgressBar } from '../progress-bar/progress-bar';
 
 let found = false;
 let tapIndex = 0;
@@ -15,6 +16,7 @@ type PartCount = {
 };
 
 const client = Context.client;
+
 if (client) {
   const setNumber = getSetNumber();
   if (setNumber) {
@@ -45,17 +47,20 @@ if (client) {
     combineLatest([partCounts$, setPartTotals$])
       .pipe(
         map(([partCounts, totals]) => {
-          console.log("A", partCounts);
-          console.log("B", totals.totalParts);
-          return 0;
+          const partCountSum = partCounts.reduce((sum, part) => sum + part.count, 0);
+          return { partCountSum, totalParts: totals.totalParts };
         }),
-        tap((progress) => {
-          console.log("Progress", progress);
+        tap(({ partCountSum, totalParts }) => {
+          updateProgressBar(partCountSum, totalParts);
+          console.log("Progress", partCountSum, totalParts);
         })
       )
       .subscribe();
   }
 }
+
+// Initialiser progress baren med observables
+initializeProgressBar(0, 100);
 
 function getSetNumber(): string | undefined {
   const regex = /\/sets\/([^\/]+)/;
