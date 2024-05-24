@@ -1,8 +1,20 @@
-import { combineLatest, concatWith, filter, map, of, shareReplay, tap, withLatestFrom } from "rxjs";
+import {
+  combineLatest,
+  concatWith,
+  filter,
+  map,
+  of,
+  shareReplay,
+  tap,
+  withLatestFrom,
+} from "rxjs";
 import SyncStorage from "../storage/sync-storage";
 import "./part-tracker.scss";
 import { Context } from "../context/context";
-import { updateProgressBar, initializeProgressBar } from '../progress-bar/progress-bar';
+import {
+  updateProgressBar,
+  initializeProgressBar,
+} from "../progress-bar/progress-bar";
 import { RebrickableClient } from "../rebrickable/rebrickable.client";
 
 const storageKey = "part-tracker";
@@ -22,7 +34,7 @@ const client = apiKey ? new RebrickableClient(apiKey) : undefined;
 if (client) {
   const setNumber = getSetNumber();
   if (setNumber) {
-    const setParts$ = client.getSetParts(setNumber).pipe(shareReplay(1))
+    const setParts$ = client.getSetParts(setNumber).pipe(shareReplay(1));
 
     const setPartTotals$ = setParts$.pipe(
       map((setParts) => {
@@ -34,24 +46,24 @@ if (client) {
           setParts.map((part) => `${part.partNumber}/${part.color}`)
         ).size;
         return { totalParts, totalPartTypes };
-      }),
+      })
     );
 
-    const storageCount$ = SyncStorage.getObservable<Record<string, number>>(storageKey)
-    .pipe(
-      map(x => x ?? {}),
-    );
-    
+    const storageCount$ = SyncStorage.getObservable<Record<string, number>>(
+      storageKey
+    ).pipe(map((x) => x ?? {}));
 
     combineLatest([setParts$, storageCount$, setPartTotals$])
       .pipe(
         map(([setParts, storageCount, totals]) => {
-          
-          const partCounts = setParts.map(part => storageCount[part.id]).filter(x => x !== undefined).reduce((sum, count) => sum + count, 0);
+          const partCounts = setParts
+            .map((part) => storageCount[part.id])
+            .filter((x) => x !== undefined)
+            .reduce((sum, count) => sum + count, 0);
 
           updateProgressBar(partCounts, totals.totalParts);
           globalPartCounts = partCounts;
-          globalTotalParts =  totals.totalParts;
+          globalTotalParts = totals.totalParts;
         })
       )
       .subscribe();
@@ -237,10 +249,8 @@ function checkElementExists(observer: MutationObserver) {
     found = true;
     observer.disconnect();
 
-    
-
-// Initialiser progress baren med observables
-initializeProgressBar(globalPartCounts, globalTotalParts);
+    // Initialiser progress baren med observables
+    initializeProgressBar(globalPartCounts, globalTotalParts);
 
     addResetButton();
     extendCheckboxes(checkboxes);
