@@ -6,6 +6,7 @@ module.exports = {
   entry: {
     background: "./src/background.ts",
     content: "./src/content-script.ts",
+    "part-tracker": "./src/part-tracker/part-tracker.ts",
     "part-colors": "./src/part-colors/part-colors.ts",
     "part-colors-styles": "./src/part-colors/part-colors.scss",
     popup: "./src/popup.ts",

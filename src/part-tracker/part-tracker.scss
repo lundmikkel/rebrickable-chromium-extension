@@ -1,0 +1,42 @@
+.part-bulk-checkbox {
+  display: flex;
+
+  .checkbox {
+    margin: 4px 4px 3px -4px;
+  }
+}
+
+.part-quantity-input {
+  height: 30px;
+  margin-top: 4px;
+  text-align: right;
+  width: 42px;
+
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    opacity: 1;
+  }
+}
+
+.js-part-data,
+.js-owner-data {
+  position: relative;
+}
+
+.part-link {
+  position: absolute;
+  top: 1rem;
+  left: 0;
+  height: 1rem;
+  width: 1rem;
+  z-index: 1;
+}
+
+.part-link-2 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 1rem;
+  width: 1rem;
+  z-index: 1;
+}
