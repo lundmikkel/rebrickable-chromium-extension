@@ -1,7 +1,7 @@
 import { combineLatest, map, of, tap } from "rxjs";
 import SyncStorage from "../storage/sync-storage";
 import "./part-tracker.scss";
-import { Context } from "../context/context";
+import { RebrickableClient } from "../rebrickable/rebrickable.client";
 
 const storageKey = "part-tracker";
 
@@ -11,12 +11,9 @@ const ids: string[] = [];
 
 //#region Fetching set data
 
-type PartCount = {
-  partId: number;
-  count: number;
-};
+const apiKey = await SyncStorage.get<string>("api-key");
+const client = apiKey ? new RebrickableClient(apiKey) : undefined;
 
-const client = Context.client;
 if (client) {
   const setNumber = getSetNumber();
   if (setNumber) {
@@ -33,16 +30,8 @@ if (client) {
       })
     );
 
-    const partCounts$ = of<PartCount[]>([
-      {
-        partId: 557513,
-        count: 2,
-      },
-      {
-        partId: 792576,
-        count: 1,
-      },
-    ]);
+    const partCounts$ =
+      SyncStorage.getObservable<Record<string, number>>(storageKey);
 
     combineLatest([partCounts$, setPartTotals$])
       .pipe(

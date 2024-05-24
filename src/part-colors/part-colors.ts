@@ -1,10 +1,12 @@
 import { Subject, from, scan, switchMap } from "rxjs";
-import './part-colors.scss';
+import "./part-colors.scss"
 
 const root = document.querySelector("#inventory") ?? document;
 
 const partSelector = ".js-part > div";
 const partDataSelector = ".js-part-data";
+const circleColorSelector = ".set-colors > a"
+const lazyImageSelector = '.img-responsive:not(.lazy-loaded)'
 
 root
   .querySelectorAll(partSelector)
@@ -172,12 +174,70 @@ function appendColorElement(
 }
 
 function createColorCircleElement(colorCode: string, transparent: boolean) {
-  const circleElement = document.createElement("span");
-  circleElement.className = "color-circle";
+  const circleElement = document.createElement("a");
+  circleElement.className = "color-circle hover";
   if (transparent) {
     circleElement.className += " transparent";
   }
   circleElement.style.backgroundColor = `#${colorCode}`;
   circleElement.style.border = "1px solid black";
+  circleElement.addEventListener('click', () => {
+    const isClicked = circleElement.getAttribute("clicked");
+
+    if(isClicked == null || isClicked == "false"){
+      circleElement.setAttribute("clicked", "true");
+    } else {
+      circleElement.setAttribute("clicked", "false");
+    }
+    refilter();
+    ensureImagesAreNotLazyLoaded();
+  });
   return circleElement;
+}
+
+function refilter() {
+  const colors = getSelectedColors();
+  const parts = root.querySelectorAll(partSelector);
+
+  parts.forEach((element) => {
+    const part = element.querySelector(partDataSelector) as HTMLElement | null;
+    if(colors != undefined && colors.length == 0){
+      part?.parentElement?.parentElement?.parentElement?.removeAttribute('style');
+      return;
+    }
+    const partColor = part?.getAttribute("data-color_name")
+    if(colors != undefined && partColor != null && colors.includes(partColor))
+      {
+        part?.parentElement?.parentElement?.parentElement?.removeAttribute('style');
+      }
+      else{
+        part?.parentElement?.parentElement?.parentElement?.setAttribute('style', 'display: none;');
+      }
+  });
+}
+
+function getSelectedColors() {
+  const colors: string[] = [];
+  const circles = document.querySelectorAll(circleColorSelector);
+  if (circles === null || circles.length === 0) {
+      return;
+  }
+  circles.forEach(c => {
+    const circleColor = c.getAttribute("title");
+    const isCircleClicked = c.getAttribute("clicked");
+    if(isCircleClicked != null && isCircleClicked == "true" && circleColor != null){
+      colors.push(circleColor);
+    }
+  })
+  return colors;
+}
+
+function ensureImagesAreNotLazyLoaded(){
+  const images = document.querySelectorAll(lazyImageSelector);
+  images.forEach(image => {
+    const dataSrc = image.getAttribute('data-src');
+    if (dataSrc) {
+      image.setAttribute('src', dataSrc);
+    }
+  });
 }
