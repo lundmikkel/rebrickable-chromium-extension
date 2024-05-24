@@ -1,13 +1,12 @@
+import SyncStorage from '../storage/syncStorage';
 import "./part-tracker.scss";
 
 let found = false;
 let tapIndex = 0;
 const ids: string[] = [];
 
-function extendCheckboxes(checkboxes: NodeListOf<HTMLInputElement>) {
-  const initialData: Record<string, any> =
-    JSON.parse(localStorage.getItem("checkboxData") || "{}") || {};
-
+async function extendCheckboxes(checkboxes: NodeListOf<HTMLInputElement>) {
+  const initialData: Record<string, any> = await SyncStorage.get(null);
   checkboxes.forEach((checkbox) => {
     const id = getId(checkbox);
     if (id) {
@@ -88,11 +87,10 @@ function setCheckboxFromLocalStorage(
   setNumericInput(id, value);
 }
 
-function persistCheckboxData(id: string, value: number) {
-  const data: Record<string, any> =
-    JSON.parse(localStorage.getItem("checkboxData") || "{}") || {};
+async function persistCheckboxData(id: string, value: number) {
+  const data: Record<string, any> = (await SyncStorage.get(null)) || {};
   data[id] = value;
-  localStorage.setItem("checkboxData", JSON.stringify(data));
+  await SyncStorage.set(data);
 }
 
 function getId(target: HTMLElement): string | null {
@@ -187,12 +185,12 @@ function addResetButton() {
   button.title = "Reset all checks";
   button.textContent = "Reset checks";
 
-  button.onclick = () => {
+  button.onclick = async () => {
     if (confirm("Want to reset all?")) {
       const data: Record<string, any> =
-        JSON.parse(localStorage.getItem("checkboxData") || "{}") || {};
+        (await SyncStorage.get(null)) || {};
       ids.forEach((id) => delete data[id]);
-      localStorage.setItem("checkboxData", JSON.stringify(data));
+      await SyncStorage.set(data);
       location.reload();
     }
   };
