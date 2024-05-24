@@ -1,58 +1,59 @@
 type StorageData = Record<string, any>;
-  
-  export class SyncStorage {
-    static get(keys: string |string[] | null): Promise<StorageData> {
-      return new Promise((resolve, reject) => {
-        chrome.storage.sync.get(keys, (items) => {
-          if (chrome.runtime.lastError) {
-            reject(chrome.runtime.lastError);
-          } else {
-            resolve(items);
-          }
-        });
-      });
-    }
 
-    static getSingleItem(key: string): Promise<any>{
-      return this.get(key).then(items => items[key])
-    }
-  
-    static set(items: StorageData): Promise<void> {
-      return new Promise((resolve, reject) => {
-        chrome.storage.sync.set(items, () => {
-          if (chrome.runtime.lastError) {
-            reject(chrome.runtime.lastError);
-          } else {
-            resolve();
-          }
-        });
-      });
-    }
-  
-    static remove(keys: string | string[]): Promise<void> {
-      return new Promise((resolve, reject) => {
-        chrome.storage.sync.remove(keys, () => {
-          if (chrome.runtime.lastError) {
-            reject(chrome.runtime.lastError);
-          } else {
-            resolve();
-          }
-        });
-      });
-    }
-  
-    static clear(): Promise<void> {
-      return new Promise((resolve, reject) => {
-        chrome.storage.sync.clear(() => {
-          if (chrome.runtime.lastError) {
-            reject(chrome.runtime.lastError);
-          } else {
-            resolve();
-          }
-        });
-      });
-    }
+export class SyncStorage {
+  private static storage = chrome.storage.sync;
+
+  public static get<T>(key: string): Promise<T | undefined> {
+    return this.getAll(key).then((items) => items[key]);
   }
-  
-  export default SyncStorage;
-  
+
+  private static getAll(...keys: string[]): Promise<StorageData> {
+    return new Promise((resolve, reject) => {
+      this.storage.get(keys, (items) => {
+        if (chrome.runtime.lastError) {
+          reject(chrome.runtime.lastError);
+        } else {
+          resolve(items);
+        }
+      });
+    });
+  }
+
+  public static set<T>(key: string, value: T): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.storage.set({ [key]: value }, () => {
+        if (chrome.runtime.lastError) {
+          reject(chrome.runtime.lastError);
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
+
+  public static remove(...keys: string[]): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.storage.remove(keys, () => {
+        if (chrome.runtime.lastError) {
+          reject(chrome.runtime.lastError);
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
+
+  public static clear(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.storage.clear(() => {
+        if (chrome.runtime.lastError) {
+          reject(chrome.runtime.lastError);
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
+}
+
+export default SyncStorage;
