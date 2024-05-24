@@ -8,15 +8,13 @@ module.exports = {
     content: "./src/content-script.ts",
     "part-tracker": "./src/part-tracker/part-tracker.ts",
     "part-colors": "./src/part-colors/part-colors.ts",
-    "part-colors-styles": "./src/part-colors/part-colors.scss",
     popup: "./src/popup.ts",
   },
   output: {
-    path: path.resolve(__dirname, "dist"),
-    filename: "[name].js",
+    path: path.resolve(__dirname, "dist")
   },
   resolve: {
-    extensions: [".ts", ".js"],
+    extensions: [".ts", ".js", ".scss"],
   },
   module: {
     rules: [
