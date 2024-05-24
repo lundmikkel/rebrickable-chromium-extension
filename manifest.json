@@ -10,6 +10,11 @@
     {
       "matches": ["https://rebrickable.com/*"],
       "js": ["dist/content.js"]
+    },
+    {
+      "matches": ["https://rebrickable.com/sets/*"],
+      "js": ["dist/part-colors/part-colors.js"],
+      "css": ["dist/part-colors/part-colors.css"]
     }
   ],
   "action": {
