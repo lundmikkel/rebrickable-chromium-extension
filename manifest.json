@@ -13,6 +13,10 @@
     },
     {
       "matches": ["https://rebrickable.com/sets/*"],
+      "js": ["dist/part-tracker.js"]
+    },
+    {
+      "matches": ["https://rebrickable.com/sets/*"],
       "js": ["dist/part-colors.js"],
       "css": ["dist/part-colors-styles.css"]
     },
