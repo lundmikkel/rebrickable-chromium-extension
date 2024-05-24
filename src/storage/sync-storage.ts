@@ -1,7 +1,7 @@
 type StorageData = Record<string, any>;
   
   export class SyncStorage {
-    static get(keys: string | string[] | null): Promise<StorageData> {
+    static get(keys: string |string[] | null): Promise<StorageData> {
       return new Promise((resolve, reject) => {
         chrome.storage.sync.get(keys, (items) => {
           if (chrome.runtime.lastError) {
@@ -11,6 +11,10 @@ type StorageData = Record<string, any>;
           }
         });
       });
+    }
+
+    static getSingleItem(key: string): Promise<any>{
+      return this.get(key).then(items => items[key])
     }
   
     static set(items: StorageData): Promise<void> {

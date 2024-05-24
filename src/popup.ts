@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function registerPageContent() {
-  const apiKey = (await SyncStorage.get(storageKey))[storageKey]
+  const apiKey = await SyncStorage.getSingleItem(storageKey)
 
   console.log(apiKey)
 
