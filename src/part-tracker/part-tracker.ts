@@ -1,13 +1,12 @@
 import SyncStorage from '../storage/syncStorage';
+import "./part-tracker.scss";
+
 let found = false;
 let tapIndex = 0;
 const ids: string[] = [];
 
-console.warn("HELLO");
-
 async function extendCheckboxes(checkboxes: NodeListOf<HTMLInputElement>) {
   const initialData: Record<string, any> = await SyncStorage.get(null);
-
   checkboxes.forEach((checkbox) => {
     const id = getId(checkbox);
     if (id) {
