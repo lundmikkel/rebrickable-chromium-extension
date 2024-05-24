@@ -19,21 +19,9 @@ document.addEventListener("DOMContentLoaded", () => {
 async function renderPage() {
   const apiKey: string | undefined = await SyncStorage.get(storageKey);
 
-  if (apiKey) {
-    hideDiv("enter-api-key-section");
-    showDiv("api-key-entered-section");
-  } else {
-    showDiv("enter-api-key-section");
-    hideDiv("api-key-entered-section");
-  }
-}
-
-function hideDiv(div: string) {
-  document.getElementById(div)!.style.display = "none";
-}
-
-function showDiv(div: string) {
-  document.getElementById(div)!.style.display = "block";
+  var element = (<HTMLParagraphElement> document.getElementById("api-key-text"));
+  
+  element.textContent = apiKey ? apiKey : "None"
 }
 
 function registerSubmitApiKeyButton() {
@@ -53,6 +41,8 @@ function registerSubmitApiKeyButton() {
       SyncStorage.set(storageKey, key);
 
       Context.client = new RebrickableClient(key);
+
+      input.value = ""
 
       renderPage();
     });

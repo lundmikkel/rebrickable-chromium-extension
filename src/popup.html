@@ -1,9 +1,26 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Rebrickable Set Searcher</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   </head>
   <style>
+    button {
+      border: 1px solid rgb(52, 50, 53);
+      background-color: transparent;
+      border-radius: 5px;
+    }
+    input {
+      border: 1px solid rgb(52, 50, 53);
+      border-radius: 2px;
+      width: 100%;
+      margin-right: 5px;
+    }
+    button:hover {
+      background-color: whitesmoke
+    }
+    .trash_button {
+      border: none;
+    }
     @font-face {
         font-family: "Sen-Regular";
         src: url("Sen-Regular.ttf");
@@ -14,13 +31,14 @@
       <img style="margin: 0; padding: 0;" src ="../rebrickable.png" alt="rebrickable"/>
       <p style="color: white; font-size: 20px; margin: 0; padding-left: 10px; padding-bottom: 5px; margin-top: -10px;">Extension</p>
     </div>
-    <div id="api-key-entered-section" style="display: flex;">
-      <p>API key exists!</p>
-      <button id="api-key-delete-button">Delete!</button>
+    <div style="display: flex; justify-content: space-between;">
+        <p>Using API key: <span style="font-weight: bold;" id="api-key-text">None</span></span></p>
+        <button id="api-key-delete-button" class="trash_button">
+          <i class="fa fa-trash"></i>
+        </button>
     </div>
-    <div id="enter-api-key-section">
-      <p>Paste API key:</p>
-      <input id="api-key-input-field" type="text"></input>
+    <div style="display: flex; justify-content: space-between;">
+      <input id="api-key-input-field" type="text" placeholder="Paste API key"/>
       <button id="api-key-submit-button">Save</button>
     </div>
     <script src="popup.js"></script>
