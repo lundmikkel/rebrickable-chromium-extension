@@ -1,9 +1,6 @@
-import { SyncStorage } from "./storage/sync_storage";
+import SyncStorage from "./storage/sync-storage";
 
 console.log("Popup script running");
-
-// TODO: get from somewhere else
-const syncStorage = new SyncStorage()
 
 const storageKey = "api-key"
 
@@ -17,8 +14,10 @@ document.addEventListener("DOMContentLoaded", () => {
   registerDeleteApiKeyButton()
 });
 
-function registerPageContent() {
-  const apiKey = syncStorage.Get(storageKey)
+async function registerPageContent() {
+  const apiKey = await SyncStorage.get(storageKey)
+
+  console.log(apiKey)
 
   if (apiKey) {
     hideDiv("enter-api-key-section")
@@ -55,7 +54,9 @@ function registerSubmitApiKeyButton() {
 }
 
 function saveApiKey(key: string) {
-  syncStorage.Save(storageKey, key)
+  SyncStorage.set({
+    storageKey: key
+  })
 }
 
 function registerDeleteApiKeyButton() {
@@ -68,5 +69,5 @@ function registerDeleteApiKeyButton() {
 }
 
 function deleteApiKey() {
-  syncStorage.Delete(storageKey)
+  SyncStorage.remove([storageKey])
 }

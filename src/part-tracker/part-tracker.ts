@@ -1,4 +1,4 @@
-import SyncStorage from '../storage/syncStorage';
+import SyncStorage from '../storage/sync-storage';
 import "./part-tracker.scss";
 
 let found = false;

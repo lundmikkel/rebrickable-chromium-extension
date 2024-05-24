@@ -1,8 +1,6 @@
-interface StorageData {
-    [key: string]: any;
-  }
+type StorageData = Record<string, any>;
   
-  class SyncStorage {
+  export class SyncStorage {
     static get(keys: string | string[] | null): Promise<StorageData> {
       return new Promise((resolve, reject) => {
         chrome.storage.sync.get(keys, (items) => {
