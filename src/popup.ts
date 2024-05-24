@@ -1,3 +1,5 @@
+import { Context } from "./context/context";
+import { RebrickableClient } from "./rebrickable/rebrickable.client";
 import SyncStorage from "./storage/sync-storage";
 
 console.log("Popup script running");
@@ -48,6 +50,8 @@ function registerSubmitApiKeyButton() {
 
       SyncStorage.set({[storageKey]: key})
 
+      Context.client = new RebrickableClient(key)
+
       renderPage()
     });
   }
@@ -58,6 +62,8 @@ function registerDeleteApiKeyButton() {
   if (button) {
     button.addEventListener("click", () => {
       SyncStorage.remove([storageKey])
+
+      Context.client = undefined
 
       renderPage()
     });

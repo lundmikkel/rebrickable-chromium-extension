@@ -13,11 +13,14 @@ import { ZodTypeAny, z } from "zod";
 
 export class RebrickableClient {
   private readonly baseUrl = "https://rebrickable.com/api/v3/lego";
-  private readonly apiKey = "03075c67bbf9e33058a5335f6dcd22f9"; // TODO: Get from storage
-  private readonly headers = {
-    Authorization: `key ${this.apiKey}`,
-    "Content-Type": "application/json",
-  };
+  private readonly headers;
+
+  constructor(apiKey: string) {
+    this.headers = {
+      Authorization: `key ${apiKey}`,
+      "Content-Type": "application/json",
+    }
+  }
 
   public getPartSuggestions(partNumber: string): Observable<Part[]> {
     return this.get(
