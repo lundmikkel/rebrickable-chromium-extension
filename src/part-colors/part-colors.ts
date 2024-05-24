@@ -1,4 +1,5 @@
 import { Subject, from, scan, switchMap } from "rxjs";
+import './part-colors.scss';
 
 const root = document.querySelector("#inventory") ?? document;
 
