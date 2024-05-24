@@ -8,6 +8,57 @@ export const getPagedResult = <T extends ZodTypeAny>(resultSchema: T) =>
     results: resultSchema.array(),
   });
 
+const setPartsPartSchema = z
+  .object({
+    part_num: z.string(),
+    name: z.string(),
+    part_cat_id: z.number(),
+    part_url: z.string().url(),
+    part_img_url: z.string().url(),
+    print_of: z.null(),
+  })
+  .transform((x) => ({
+    partNumber: x.part_num,
+  }));
+
+const setPartsColorSchema = z
+  .object({
+    id: z.number(),
+    name: z.string(),
+    rgb: z.string(),
+    is_trans: z.boolean(),
+  })
+  .transform(
+    (x) => x.id
+    // ({
+    //   id: x.id,
+    //   name: x.id,
+    //   rgbHex: x.rgb,
+    //   isTransparent: x.is_trans,
+    // })
+  );
+
+export const setPartsSchema = z
+  .object({
+    id: z.number(),
+    inv_part_id: z.number(),
+    part: setPartsPartSchema,
+    color: setPartsColorSchema,
+    set_num: z.string(),
+    quantity: z.number(),
+    is_spare: z.boolean(),
+    element_id: z.string().nullable(),
+    num_sets: z.number(),
+  })
+  .transform((x) => ({
+    id: x.id,
+    partNumber: x.part.partNumber,
+    color: x.color,
+    quantity: x.quantity,
+    isSpare: x.is_spare,
+  }));
+export type SetPartsSchema = z.output<typeof setPartsSchema>;
+
 export const partSchema = z
   .object({
     part_num: z.string(),

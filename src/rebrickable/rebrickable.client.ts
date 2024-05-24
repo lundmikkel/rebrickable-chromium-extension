@@ -3,11 +3,13 @@ import {
   Part,
   PartColorSet,
   PartColors,
+  SetPartsSchema,
   getPagedResult,
   partColorSchema,
   partColorSetSchema,
   partColorsSchema,
   partSchema,
+  setPartsSchema,
 } from "./api-responses";
 import { ZodTypeAny, z } from "zod";
 
@@ -20,6 +22,26 @@ export class RebrickableClient {
       Authorization: `key ${apiKey}`,
       "Content-Type": "application/json",
     }
+  }
+
+  public getSetParts(setNumber: string): Observable<SetPartsSchema[]> {
+    return this.get(
+      `sets/${setNumber}/parts`,
+      getPagedResult(setPartsSchema)
+    ).pipe(
+      expand((response) =>
+        response.next
+          ? this.get(
+              this.getNext(response.next),
+              getPagedResult(setPartsSchema)
+            )
+          : EMPTY
+      ),
+      reduce(
+        (acc, current) => acc.concat(current.results),
+        [] as SetPartsSchema[]
+      )
+    );
   }
 
   public getPartSuggestions(partNumber: string): Observable<Part[]> {
