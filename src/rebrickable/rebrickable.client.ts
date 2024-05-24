@@ -11,9 +11,9 @@ import {
 } from "./api-responses";
 import { ZodTypeAny, z } from "zod";
 
-export class RebrickableService {
+export class RebrickableClient {
   private readonly baseUrl = "https://rebrickable.com/api/v3/lego";
-  private readonly apiKey = "03075c67bbf9e33058a5335f6dcd22f9";
+  private readonly apiKey = "03075c67bbf9e33058a5335f6dcd22f9"; // TODO: Get from storage
   private readonly headers = {
     Authorization: `key ${this.apiKey}`,
     "Content-Type": "application/json",
