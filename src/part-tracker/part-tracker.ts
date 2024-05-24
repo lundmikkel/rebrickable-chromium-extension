@@ -1,7 +1,7 @@
 import { combineLatest, map, of, tap } from "rxjs";
-import { RebrickableClient } from "../rebrickable/rebrickable.client";
 import SyncStorage from "../storage/sync-storage";
 import "./part-tracker.scss";
+import { Context } from "../context/context";
 
 let found = false;
 let tapIndex = 0;
@@ -14,43 +14,47 @@ type PartCount = {
   count: number;
 };
 
-const setNumber = getSetNumber();
-if (setNumber) {
-  const client = new RebrickableClient();
-
-  const setPartTotals$ = client.getSetParts(setNumber).pipe(
-    map((setParts) => {
-      const totalParts = setParts.reduce((sum, part) => sum + part.quantity, 0);
-      const totalPartTypes = new Set(
-        setParts.map((part) => `${part.partNumber}/${part.color}`)
-      ).size;
-      return { totalParts, totalPartTypes };
-    })
-  );
-
-  const partCounts$ = of<PartCount[]>([
-    {
-      partId: 557513,
-      count: 2,
-    },
-    {
-      partId: 792576,
-      count: 1,
-    },
-  ]);
-
-  combineLatest([partCounts$, setPartTotals$])
-    .pipe(
-      map(([partCounts, totals]) => {
-        console.log("A", partCounts);
-        console.log("B", totals.totalParts);
-        return 0;
-      }),
-      tap((progress) => {
-        console.log("Progress", progress);
+const client = Context.client;
+if (client) {
+  const setNumber = getSetNumber();
+  if (setNumber) {
+    const setPartTotals$ = client.getSetParts(setNumber).pipe(
+      map((setParts) => {
+        const totalParts = setParts.reduce(
+          (sum, part) => sum + part.quantity,
+          0
+        );
+        const totalPartTypes = new Set(
+          setParts.map((part) => `${part.partNumber}/${part.color}`)
+        ).size;
+        return { totalParts, totalPartTypes };
       })
-    )
-    .subscribe();
+    );
+
+    const partCounts$ = of<PartCount[]>([
+      {
+        partId: 557513,
+        count: 2,
+      },
+      {
+        partId: 792576,
+        count: 1,
+      },
+    ]);
+
+    combineLatest([partCounts$, setPartTotals$])
+      .pipe(
+        map(([partCounts, totals]) => {
+          console.log("A", partCounts);
+          console.log("B", totals.totalParts);
+          return 0;
+        }),
+        tap((progress) => {
+          console.log("Progress", progress);
+        })
+      )
+      .subscribe();
+  }
 }
 
 function getSetNumber(): string | undefined {
