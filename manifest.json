@@ -19,10 +19,6 @@
       "matches": ["https://rebrickable.com/sets/*"],
       "js": ["dist/part-colors.js"],
       "css": ["dist/part-colors-styles.css"]
-    },
-    {
-      "matches": ["<all_urls>"],
-      "js": ["dist/testCode.js"]
     }
   ],
   "action": {
