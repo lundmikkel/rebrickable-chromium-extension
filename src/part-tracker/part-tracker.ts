@@ -1,4 +1,4 @@
-import { combineLatest, map, of, tap } from "rxjs";
+import { combineLatest, concatWith, filter, map, of, shareReplay, tap, withLatestFrom } from "rxjs";
 import SyncStorage from "../storage/sync-storage";
 import "./part-tracker.scss";
 import { Context } from "../context/context";
@@ -11,6 +11,9 @@ let found = false;
 let tapIndex = 0;
 const ids: string[] = [];
 
+let globalPartCounts = 0;
+let globalTotalParts = 0;
+
 //#region Fetching set data
 
 const apiKey = await SyncStorage.get<string>("api-key");
@@ -19,7 +22,9 @@ const client = apiKey ? new RebrickableClient(apiKey) : undefined;
 if (client) {
   const setNumber = getSetNumber();
   if (setNumber) {
-    const setPartTotals$ = client.getSetParts(setNumber).pipe(
+    const setParts$ = client.getSetParts(setNumber).pipe(shareReplay(1))
+
+    const setPartTotals$ = setParts$.pipe(
       map((setParts) => {
         const totalParts = setParts.reduce(
           (sum, part) => sum + part.quantity,
@@ -29,29 +34,29 @@ if (client) {
           setParts.map((part) => `${part.partNumber}/${part.color}`)
         ).size;
         return { totalParts, totalPartTypes };
-      })
+      }),
     );
 
-    const partCounts$ =
-      SyncStorage.getObservable<Record<string, number>>(storageKey);
+    const storageCount$ = SyncStorage.getObservable<Record<string, number>>(storageKey)
+    .pipe(
+      map(x => x ?? {}),
+    );
+    
 
-    combineLatest([partCounts$, setPartTotals$])
+    combineLatest([setParts$, storageCount$, setPartTotals$])
       .pipe(
-        map(([partCounts, totals]) => {
-          const partCountSum = partCounts.reduce((sum, part) => sum + part.count, 0);
-          return { partCountSum, totalParts: totals.totalParts };
-        }),
-        tap(({ partCountSum, totalParts }) => {
-          updateProgressBar(partCountSum, totalParts);
-          console.log("Progress", partCountSum, totalParts);
+        map(([setParts, storageCount, totals]) => {
+          
+          const partCounts = setParts.map(part => storageCount[part.id]).filter(x => x !== undefined).reduce((sum, count) => sum + count, 0);
+
+          updateProgressBar(partCounts, totals.totalParts);
+          globalPartCounts = partCounts;
+          globalTotalParts =  totals.totalParts;
         })
       )
       .subscribe();
   }
 }
-
-// Initialiser progress baren med observables
-initializeProgressBar(0, 100);
 
 function getSetNumber(): string | undefined {
   const regex = /\/sets\/([^\/]+)/;
@@ -231,6 +236,11 @@ function checkElementExists(observer: MutationObserver) {
   if (checkboxes.length > 0) {
     found = true;
     observer.disconnect();
+
+    
+
+// Initialiser progress baren med observables
+initializeProgressBar(globalPartCounts, globalTotalParts);
 
     addResetButton();
     extendCheckboxes(checkboxes);

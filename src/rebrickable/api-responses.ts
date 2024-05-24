@@ -15,7 +15,7 @@ const setPartsPartSchema = z
     part_cat_id: z.number(),
     part_url: z.string().url(),
     part_img_url: z.string().url(),
-    print_of: z.null(),
+    print_of: z.string().nullable(),
   })
   .transform((x) => ({
     partNumber: x.part_num,
