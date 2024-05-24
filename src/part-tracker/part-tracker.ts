@@ -1,8 +1,8 @@
+import "./part-tracker.scss";
+
 let found = false;
 let tapIndex = 0;
 const ids: string[] = [];
-
-console.warn("HELLO");
 
 function extendCheckboxes(checkboxes: NodeListOf<HTMLInputElement>) {
   const initialData: Record<string, any> =
