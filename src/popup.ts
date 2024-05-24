@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function registerPageContent() {
-  const apiKey = await SyncStorage.get(storageKey)
+  const apiKey = (await SyncStorage.get(storageKey))[storageKey]
 
   console.log(apiKey)
 
@@ -54,9 +54,7 @@ function registerSubmitApiKeyButton() {
 }
 
 function saveApiKey(key: string) {
-  SyncStorage.set({
-    storageKey: key
-  })
+  SyncStorage.set({[storageKey]: key})
 }
 
 function registerDeleteApiKeyButton() {
