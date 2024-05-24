@@ -32,3 +32,14 @@
     transform-origin: left center;
   }
 }
+
+.hover {
+  &:hover {
+    border: 2px solid blue !important;
+    opacity: 80% !important;
+  }
+}
+
+[clicked="true"] {
+  border: 4px dashed red !important;
+}

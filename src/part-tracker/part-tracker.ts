@@ -3,6 +3,9 @@ import SyncStorage from "../storage/sync-storage";
 import "./part-tracker.scss";
 import { Context } from "../context/context";
 import { updateProgressBar, initializeProgressBar } from '../progress-bar/progress-bar';
+import { RebrickableClient } from "../rebrickable/rebrickable.client";
+
+const storageKey = "part-tracker";
 
 let found = false;
 let tapIndex = 0;
@@ -10,12 +13,8 @@ const ids: string[] = [];
 
 //#region Fetching set data
 
-type PartCount = {
-  partId: number;
-  count: number;
-};
-
-const client = Context.client;
+const apiKey = await SyncStorage.get<string>("api-key");
+const client = apiKey ? new RebrickableClient(apiKey) : undefined;
 
 if (client) {
   const setNumber = getSetNumber();
@@ -33,16 +32,8 @@ if (client) {
       })
     );
 
-    const partCounts$ = of<PartCount[]>([
-      {
-        partId: 557513,
-        count: 2,
-      },
-      {
-        partId: 792576,
-        count: 1,
-      },
-    ]);
+    const partCounts$ =
+      SyncStorage.getObservable<Record<string, number>>(storageKey);
 
     combineLatest([partCounts$, setPartTotals$])
       .pipe(
@@ -71,7 +62,8 @@ function getSetNumber(): string | undefined {
 //#endregion
 
 async function extendCheckboxes(checkboxes: NodeListOf<HTMLInputElement>) {
-  const initialData: Record<string, any> = await SyncStorage.get(null);
+  const initialData =
+    (await SyncStorage.get<Record<string, number>>(storageKey)) ?? {};
   checkboxes.forEach((checkbox) => {
     const id = getId(checkbox);
     if (id) {
@@ -153,9 +145,10 @@ function setCheckboxFromLocalStorage(
 }
 
 async function persistCheckboxData(id: string, value: number) {
-  const data: Record<string, any> = (await SyncStorage.get(null)) || {};
+  const data: Record<string, number> =
+    (await SyncStorage.get(storageKey)) ?? {};
   data[id] = value;
-  await SyncStorage.set(data);
+  await SyncStorage.set(storageKey, data);
 }
 
 function getId(target: HTMLElement): string | null {
@@ -252,9 +245,10 @@ function addResetButton() {
 
   button.onclick = async () => {
     if (confirm("Want to reset all?")) {
-      const data: Record<string, any> = (await SyncStorage.get(null)) || {};
+      const data: Record<string, any> =
+        (await SyncStorage.get(storageKey)) || {};
       ids.forEach((id) => delete data[id]);
-      await SyncStorage.set(data);
+      await SyncStorage.set(storageKey, data);
       location.reload();
     }
   };
