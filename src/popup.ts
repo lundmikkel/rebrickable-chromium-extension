@@ -1,3 +1,5 @@
+import { Context } from "./context/context";
+import { RebrickableClient } from "./rebrickable/rebrickable.client";
 import SyncStorage from "./storage/sync-storage";
 
 console.log("Popup script running");
@@ -7,17 +9,15 @@ const storageKey = "api-key"
 document.addEventListener("DOMContentLoaded", () => {
   console.log("DOM content loaded")
 
-  registerPageContent()
-
   registerSubmitApiKeyButton()
 
   registerDeleteApiKeyButton()
+
+  renderPage()
 });
 
-async function registerPageContent() {
-  const apiKey = await SyncStorage.getSingleItem(storageKey)
-
-  console.log(apiKey)
+async function renderPage() {
+  const apiKey = (await SyncStorage.get(storageKey))[storageKey]
 
   if (apiKey) {
     hideDiv("enter-api-key-section")
@@ -48,24 +48,24 @@ function registerSubmitApiKeyButton() {
         return;
       }
 
-      saveApiKey(key)
+      SyncStorage.set({[storageKey]: key})
+
+      Context.client = new RebrickableClient(key)
+
+      renderPage()
     });
   }
-}
-
-function saveApiKey(key: string) {
-  SyncStorage.set({[storageKey]: key})
 }
 
 function registerDeleteApiKeyButton() {
   const button = document.getElementById("api-key-delete-button");
   if (button) {
     button.addEventListener("click", () => {
-      deleteApiKey()
+      SyncStorage.remove([storageKey])
+
+      Context.client = undefined
+
+      renderPage()
     });
   }
-}
-
-function deleteApiKey() {
-  SyncStorage.remove([storageKey])
 }
