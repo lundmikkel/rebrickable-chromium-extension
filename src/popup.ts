@@ -7,17 +7,15 @@ const storageKey = "api-key"
 document.addEventListener("DOMContentLoaded", () => {
   console.log("DOM content loaded")
 
-  registerPageContent()
-
   registerSubmitApiKeyButton()
 
   registerDeleteApiKeyButton()
+
+  renderPage()
 });
 
-async function registerPageContent() {
+async function renderPage() {
   const apiKey = (await SyncStorage.get(storageKey))[storageKey]
-
-  console.log(apiKey)
 
   if (apiKey) {
     hideDiv("enter-api-key-section")
@@ -48,24 +46,20 @@ function registerSubmitApiKeyButton() {
         return;
       }
 
-      saveApiKey(key)
+      SyncStorage.set({[storageKey]: key})
+
+      renderPage()
     });
   }
-}
-
-function saveApiKey(key: string) {
-  SyncStorage.set({[storageKey]: key})
 }
 
 function registerDeleteApiKeyButton() {
   const button = document.getElementById("api-key-delete-button");
   if (button) {
     button.addEventListener("click", () => {
-      deleteApiKey()
+      SyncStorage.remove([storageKey])
+
+      renderPage()
     });
   }
-}
-
-function deleteApiKey() {
-  SyncStorage.remove([storageKey])
 }
