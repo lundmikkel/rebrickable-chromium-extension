@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function renderPage() {
-  const apiKey = (await SyncStorage.get(storageKey))[storageKey]
+  const apiKey = await SyncStorage.getSingleItem(storageKey)
 
   if (apiKey) {
     hideDiv("enter-api-key-section")
